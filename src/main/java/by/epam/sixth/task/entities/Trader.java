@@ -1,6 +1,5 @@
 package by.epam.sixth.task.entities;
 
-import by.epam.sixth.task.observer.Observer;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -9,7 +8,7 @@ import java.util.List;
 
 public class Trader {
     private double cash;
-    private final  List<Observer>observers = new ArrayList<>();
+    private final  List<TradersObserver>observers = new ArrayList<>();
 
 
     @JsonCreator
@@ -17,11 +16,11 @@ public class Trader {
         this.cash = cash;
     }
 
-    public void attach(Observer observer){
+    public void attach(TradersObserver observer){
         observers.add(observer);
     }
 
-    public void detach(Observer observer) {
+    public void detach(TradersObserver observer) {
         observers.remove(observer);
     }
 

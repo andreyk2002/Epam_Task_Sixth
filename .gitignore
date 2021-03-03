@@ -8,7 +8,7 @@
 *.ctxt
 
 # Mobile Tools for Java (J2ME)
-.mtj.tmp/
+.mtj.tmp/gi
 
 # Package Files #
 *.jar
@@ -24,3 +24,4 @@ hs_err_pid*
 /Epam_Task_Sixth.iml
 /.idea/
 /src/main/resources/
+/target/
