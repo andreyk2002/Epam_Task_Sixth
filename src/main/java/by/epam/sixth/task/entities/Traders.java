@@ -6,7 +6,6 @@ public class Traders {
     private List<Trader>traders;
 
     public Traders(){
-
     }
 
     public Traders(List<Trader> traders) {

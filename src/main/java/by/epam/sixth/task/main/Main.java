@@ -21,36 +21,26 @@ public class Main {
 
     public static void main(String[] args) throws IOException, ExecutionException, InterruptedException {
         ObjectMapper mapper = new ObjectMapper();
-
         Traders traders = mapper.readValue(new File(INPUT_FILE), Traders.class);
-
         var tradersList = traders.getTraders();
-
-        tradersList.forEach(trader -> System.out.println(trader.getCash()));
-
-        ExecutorService service = Executors.newFixedThreadPool(tradersList.size());
 
         Thread marketThread = new Thread(StockMarket.getInstance());
         marketThread.setDaemon(true);
         marketThread.start();
-
 
         TradersPrinterRunnable printer = new TradersPrinterRunnable(tradersList);
         Thread printTread = new Thread(printer);
         printTread.setDaemon(true);
         printTread.start();
 
-
+        ExecutorService service = Executors.newFixedThreadPool(tradersList.size());
         List<Future<?>> futures = tradersList.stream()
                 .map(trader -> service.submit(trader))
                 .collect(Collectors.toList());
 
-
         for (var future : futures) {
             future.get();
         }
-
-
         service.shutdown();
     }
 }
