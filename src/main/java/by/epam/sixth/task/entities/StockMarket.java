@@ -1,16 +1,17 @@
 package by.epam.sixth.task.entities;
 
-import java.util.ArrayList;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.List;
 
-public class StockMarket implements TradersObserver{
+public class StockMarket implements Runnable {
 
-    private static AtomicReference<StockMarket> instance;
+    private static final AtomicReference<StockMarket> instance = new AtomicReference<>();
     private static final ReentrantLock LOCK = new ReentrantLock();
-    private AtomicReference<Double> tradeRatio;
-    private List<Trader>traders = new ArrayList<>();
+    private final AtomicReference<Double> tradeRatio = new AtomicReference<>();
+    private static final long TIMEOUT = 10;
+
 
     public static StockMarket getInstance() {
         StockMarket localInstance = instance.get();
@@ -29,21 +30,35 @@ public class StockMarket implements TradersObserver{
     }
 
     public void handleTransaction(Trader trader) {
-
+        double startCash = trader.getCash();
+        double newCash = startCash * tradeRatio.get();
+        trader.setCash(newCash);
     }
 
     private StockMarket() {
 
     }
 
-    @Override
-    public void addObservable(Trader trader) {
-        traders.add(trader);
+    public void handleSell(Trader trader) {
+        double startCash = trader.getCash();
+        double newCash = startCash / tradeRatio.get();
+        trader.setCash(newCash);
     }
 
-
     @Override
-    public void update(Trader trader) {
+    public void run() {
 
+        while (true) {
+            Random random = new Random();
+            double randomNormal = random.nextGaussian() + 1;
+            double newRatio = Math.abs(randomNormal);
+            tradeRatio.set(newRatio);
+            try {
+                TimeUnit.MILLISECONDS.sleep(TIMEOUT);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
+
 }

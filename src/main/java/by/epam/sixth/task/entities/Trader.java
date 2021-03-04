@@ -3,29 +3,23 @@ package by.epam.sixth.task.entities;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
-public class Trader {
+public class Trader implements Runnable {
+    private static final StockMarket MARKET = StockMarket.getInstance();
     private double cash;
-    private final  List<TradersObserver>observers = new ArrayList<>();
+    private final int id;
+    private final int transactionsCount;
+    private static final long TIMEOUT = 50;
 
 
     @JsonCreator
-    public Trader(@JsonProperty("cash") double cash) {
+    public Trader(@JsonProperty("cash") double cash, @JsonProperty("id") int id,
+                  @JsonProperty("transactions") int transactionsCount) {
         this.cash = cash;
-    }
-
-    public void attach(TradersObserver observer){
-        observers.add(observer);
-    }
-
-    public void detach(TradersObserver observer) {
-        observers.remove(observer);
-    }
-
-    private void notifyObservers(){
-        observers.forEach(observer -> observer.update(this));
+        this.id = id;
+        this.transactionsCount = transactionsCount;
     }
 
     public double getCash() {
@@ -36,30 +30,43 @@ public class Trader {
         this.cash = cash;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o){
-            return true;
-        }
-        if (!(o instanceof Trader)){
-            return false;
-        }
+    public int getId() {
+        return id;
+    }
 
-        Trader trader = (Trader) o;
-
-        if (Double.compare(trader.cash, cash) != 0) {
-            return false;
-        }
-        return observers.equals(trader.observers);
+    public int getTransactionsCount() {
+        return transactionsCount;
     }
 
     @Override
-    public int hashCode() {
-        int result;
-        long temp;
-        temp = Double.doubleToLongBits(cash);
-        result = (int) (temp ^ (temp >>> 32));
-        result = 31 * result + observers.hashCode();
-        return result;
+    public String toString() {
+        return "Trader{" +
+                "cash=" + cash +
+                ", id=" + id +
+                ", transactionsCount=" + transactionsCount +
+                '}';
+    }
+
+    @Override
+    public void run() {
+        for (int i = 0; i < transactionsCount; i++) {
+            boolean isBuying = decideRandom();
+            if (isBuying) {
+                MARKET.handleTransaction(this);
+            } else {
+                MARKET.handleSell(this);
+            }
+
+            try {
+                TimeUnit.MILLISECONDS.sleep(TIMEOUT);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private boolean decideRandom() {
+        Random random = new Random();
+        return random.nextBoolean();
     }
 }
