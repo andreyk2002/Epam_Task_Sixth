@@ -9,12 +9,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
 public class Trader implements Runnable {
 
     private static final StockMarket MARKET = StockMarket.getInstance();
-    private static final long TIMEOUT = 50;
     private static final CountDownLatch MARKET_START = StockMarket.MARKET_START;
     private final int id;
     private final int transactionsCount;
@@ -70,11 +68,6 @@ public class Trader implements Runnable {
         TransactionStrategy strategy = isBuying ? new BuyTransactionStrategy() : new SellTransactionStrategy();
         Transaction transaction = new Transaction(strategy);
         MARKET.handleTransaction(transaction, this);
-        try {
-            TimeUnit.MILLISECONDS.sleep(TIMEOUT);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 
     private boolean decideRandom() {

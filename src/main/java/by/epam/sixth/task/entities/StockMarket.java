@@ -3,14 +3,12 @@ package by.epam.sixth.task.entities;
 import by.epam.sixth.task.strategy.Transaction;
 
 import java.util.Random;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.CountDownLatch;;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class StockMarket implements Runnable {
 
-    private static final long TIMEOUT = 10;
     public static final CountDownLatch MARKET_START = new CountDownLatch(1);
     private static final AtomicReference<StockMarket> instance = new AtomicReference<>();
     public static final ReentrantLock LOCK = new ReentrantLock();
@@ -47,11 +45,6 @@ public class StockMarket implements Runnable {
         MARKET_START.countDown();
         while (true) {
             changeTradeRatio();
-            try {
-                TimeUnit.MILLISECONDS.sleep(TIMEOUT);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
         }
     }
 

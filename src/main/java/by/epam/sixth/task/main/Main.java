@@ -21,8 +21,8 @@ public class Main {
 
     public static void main(String[] args) throws IOException, ExecutionException, InterruptedException {
         ObjectMapper mapper = new ObjectMapper();
-        Traders traders = mapper.readValue(new File(INPUT_FILE), Traders.class);
-        var tradersList = traders.getTraders();
+        Traders tradersWrapper = mapper.readValue(new File(INPUT_FILE), Traders.class);
+        var tradersList = tradersWrapper.getTraders();
 
         Thread marketThread = new Thread(StockMarket.getInstance());
         marketThread.setDaemon(true);
