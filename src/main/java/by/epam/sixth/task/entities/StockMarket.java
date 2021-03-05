@@ -3,7 +3,7 @@ package by.epam.sixth.task.entities;
 import by.epam.sixth.task.strategy.Transaction;
 
 import java.util.Random;
-import java.util.concurrent.CountDownLatch;;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReentrantLock;
 

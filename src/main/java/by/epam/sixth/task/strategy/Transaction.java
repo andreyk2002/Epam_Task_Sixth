@@ -4,7 +4,7 @@ import by.epam.sixth.task.entities.Trader;
 
 public class Transaction {
 
-    private TransactionStrategy strategy;
+    private final TransactionStrategy strategy;
 
     public Transaction(TransactionStrategy strategy) {
         this.strategy = strategy;
