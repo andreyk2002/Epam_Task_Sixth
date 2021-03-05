@@ -43,15 +43,6 @@ public class Trader implements Runnable {
     }
 
     @Override
-    public String toString() {
-        return "Trader{" +
-                "cash=" + String.format("%.2f", cash) +
-                ", id=" + id +
-                ", transactionsCount=" + transactionsCount +
-                '}';
-    }
-
-    @Override
     public void run() {
         try {
             MARKET_START.await();
@@ -73,5 +64,45 @@ public class Trader implements Runnable {
     private boolean decideRandom() {
         Random random = new Random();
         return random.nextBoolean();
+    }
+
+    @Override
+    public String toString() {
+        return "Trader{" +
+                "cash=" + String.format("%.2f", cash) +
+                ", id=" + id +
+                ", transactionsCount=" + transactionsCount +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Trader)) {
+            return false;
+        }
+
+        Trader trader = (Trader) o;
+
+        if (id != trader.id) {
+            return false;
+        }
+        if (transactionsCount != trader.transactionsCount) {
+            return false;
+        }
+        return Double.compare(trader.cash, cash) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        int result;
+        long temp;
+        result = id;
+        result = 31 * result + transactionsCount;
+        temp = Double.doubleToLongBits(cash);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        return result;
     }
 }
