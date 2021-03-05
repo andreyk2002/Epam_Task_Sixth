@@ -2,7 +2,6 @@ package by.epam.sixth.task.main;
 
 import by.epam.sixth.task.entities.StockMarket;
 import by.epam.sixth.task.entities.Traders;
-import by.epam.sixth.task.printers.TradersPrinterRunnable;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.File;
@@ -27,11 +26,6 @@ public class Main {
         Thread marketThread = new Thread(StockMarket.getInstance());
         marketThread.setDaemon(true);
         marketThread.start();
-
-        TradersPrinterRunnable printer = new TradersPrinterRunnable(tradersList);
-        Thread printTread = new Thread(printer);
-        printTread.setDaemon(true);
-        printTread.start();
 
         ExecutorService service = Executors.newFixedThreadPool(tradersList.size());
         List<Future<?>> futures = tradersList.stream()
