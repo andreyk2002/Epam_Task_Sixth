@@ -1,6 +1,7 @@
 package by.epam.sixth.task.main;
 
 import by.epam.sixth.task.entities.StockMarket;
+import by.epam.sixth.task.entities.Trader;
 import by.epam.sixth.task.entities.Traders;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -21,11 +22,7 @@ public class Main {
     public static void main(String[] args) throws IOException, ExecutionException, InterruptedException {
         ObjectMapper mapper = new ObjectMapper();
         Traders tradersWrapper = mapper.readValue(new File(INPUT_FILE), Traders.class);
-        var tradersList = tradersWrapper.getTraders();
-
-        Thread marketThread = new Thread(StockMarket.getInstance());
-        marketThread.setDaemon(true);
-        marketThread.start();
+        List<Trader> tradersList = tradersWrapper.getTraders();
 
         ExecutorService service = Executors.newFixedThreadPool(tradersList.size());
         List<Future<?>> futures = tradersList.stream()
@@ -36,5 +33,6 @@ public class Main {
             future.get();
         }
         service.shutdown();
+        System.out.println(tradersList.get(0).getCash());
     }
 }
