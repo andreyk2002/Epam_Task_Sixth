@@ -1,7 +1,7 @@
 package by.epam.sixth.task.entities;
 
-import by.epam.sixth.task.strategy.TransactionFactory;
-import by.epam.sixth.task.strategy.TransactionStrategy;
+import by.epam.sixth.task.strategy.Transaction;
+import by.epam.sixth.task.strategy.factory.TransactionFactory;
 
 import java.math.BigDecimal;
 import java.util.Random;
@@ -16,7 +16,9 @@ public class StockMarket implements Runnable {
     private static final CountDownLatch MARKET_START = new CountDownLatch(1);
     private static final AtomicReference<StockMarket> instance = new AtomicReference<>();
     public static final ReentrantLock LOCK = new ReentrantLock();
+
     private final AtomicReference<BigDecimal> tradeRatio = new AtomicReference<>();
+    private final Random random = new Random();
 
     public static StockMarket getInstance() {
         StockMarket localInstance = instance.get();
@@ -48,19 +50,22 @@ public class StockMarket implements Runnable {
     private StockMarket() {
     }
 
-    public CountDownLatch getMarketStart() {
-        return MARKET_START;
-    }
-
     public void handleTransaction(boolean isBuying, Trader trader) {
+        try {
+            MARKET_START.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         TransactionFactory factory = new TransactionFactory();
-        TransactionStrategy strategy = factory.getStrategy(isBuying);
+        Transaction strategy = factory.getTransaction(isBuying);
         strategy.makeTransaction(tradeRatio.get(), trader);
     }
 
     @Override
     public void run() {
-        changeTradeRatio();
+        double randomNormal = Math.abs(random.nextGaussian() + 1);
+        BigDecimal generatedResult = new BigDecimal(randomNormal);
+        tradeRatio.set(generatedResult);
         MARKET_START.countDown();
         while (true) {
             changeTradeRatio();
@@ -68,11 +73,12 @@ public class StockMarket implements Runnable {
     }
 
     private void changeTradeRatio() {
-        Random random = new Random();
-        double randomNormal = random.nextGaussian() + 1;
-        double newRatio = Math.abs(randomNormal);
-        BigDecimal generatedResult = new BigDecimal(newRatio);
-        tradeRatio.set(generatedResult);
+        double randomRatio = Math.random() * 2 - 1;
+        BigDecimal changeRatio = new BigDecimal(randomRatio);
+        tradeRatio.getAndUpdate(tradeRatio -> {
+            BigDecimal change = changeRatio.multiply(tradeRatio);
+            return tradeRatio.add(change);
+        });
     }
 
 }

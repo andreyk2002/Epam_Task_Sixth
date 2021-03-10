@@ -5,9 +5,9 @@ import by.epam.sixth.task.entities.Trader;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-public class SellTransactionStrategy implements TransactionStrategy {
+public class BuyTransaction implements Transaction {
 
-    private static final int SCALE = 2;
+    private final static int SCALE = 2;
 
     @Override
     public void makeTransaction(BigDecimal tradeRatio, Trader trader) {

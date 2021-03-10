@@ -1,6 +1,5 @@
 package by.epam.sixth.task.main;
 
-import by.epam.sixth.task.entities.StockMarket;
 import by.epam.sixth.task.entities.Trader;
 import by.epam.sixth.task.entities.Traders;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -29,10 +28,10 @@ public class Main {
                 .map(trader -> service.submit(trader))
                 .collect(Collectors.toList());
 
-        for (var future : futures) {
+        for (Future<?> future : futures) {
             future.get();
         }
-        service.shutdown();
         System.out.println(tradersList.get(0).getCash());
+        service.shutdown();
     }
 }

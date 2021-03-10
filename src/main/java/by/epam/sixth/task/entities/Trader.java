@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.math.BigDecimal;
 import java.util.Random;
-import java.util.concurrent.CountDownLatch;
 
 public class Trader implements Runnable {
 
@@ -43,12 +42,6 @@ public class Trader implements Runnable {
         for (int i = 0; i < transactionsCount; i++) {
             boolean isBuying = random.nextBoolean();
             StockMarket market = StockMarket.getInstance();
-            CountDownLatch marketStart = market.getMarketStart();
-            try {
-                marketStart.await();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
             market.handleTransaction(isBuying, this);
         }
     }

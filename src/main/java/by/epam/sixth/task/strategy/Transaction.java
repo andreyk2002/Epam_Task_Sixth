@@ -4,7 +4,7 @@ import by.epam.sixth.task.entities.Trader;
 
 import java.math.BigDecimal;
 
-public interface TransactionStrategy {
+public interface Transaction {
 
     void makeTransaction(BigDecimal tradeRatio, Trader trader);
 }
