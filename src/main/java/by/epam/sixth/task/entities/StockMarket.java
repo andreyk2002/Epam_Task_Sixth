@@ -15,7 +15,7 @@ public class StockMarket implements Runnable {
 
     private static final CountDownLatch MARKET_START = new CountDownLatch(1);
     private static final AtomicReference<StockMarket> instance = new AtomicReference<>();
-    public static final ReentrantLock LOCK = new ReentrantLock();
+    private static final ReentrantLock LOCK = new ReentrantLock();
 
     private final AtomicReference<BigDecimal> tradeRatio = new AtomicReference<>();
     private final Random random = new Random();
@@ -57,8 +57,8 @@ public class StockMarket implements Runnable {
             e.printStackTrace();
         }
         TransactionFactory factory = new TransactionFactory();
-        Transaction strategy = factory.getTransaction(isBuying);
-        strategy.makeTransaction(tradeRatio.get(), trader);
+        Transaction transaction = factory.getTransaction(isBuying);
+        transaction.handle(tradeRatio.get(), trader);
     }
 
     @Override
@@ -73,12 +73,10 @@ public class StockMarket implements Runnable {
     }
 
     private void changeTradeRatio() {
-        double randomRatio = Math.random() * 2 - 1;
+        double randomRatio = Math.random() + 0.5;
         BigDecimal changeRatio = new BigDecimal(randomRatio);
-        tradeRatio.getAndUpdate(tradeRatio -> {
-            BigDecimal change = changeRatio.multiply(tradeRatio);
-            return tradeRatio.add(change);
-        });
+        BigDecimal newRatio = changeRatio.multiply(tradeRatio.get());
+        tradeRatio.getAndSet(newRatio);
     }
 
 }

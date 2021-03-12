@@ -10,7 +10,7 @@ public class BuyTransaction implements Transaction {
     private final static int SCALE = 2;
 
     @Override
-    public void makeTransaction(BigDecimal tradeRatio, Trader trader) {
+    public void handle(BigDecimal tradeRatio, Trader trader) {
         BigDecimal oldCash = trader.getCash();
         BigDecimal newCash = oldCash.divide(tradeRatio, SCALE, RoundingMode.HALF_EVEN);
         trader.setCash(newCash);

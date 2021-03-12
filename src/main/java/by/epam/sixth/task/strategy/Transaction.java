@@ -6,5 +6,5 @@ import java.math.BigDecimal;
 
 public interface Transaction {
 
-    void makeTransaction(BigDecimal tradeRatio, Trader trader);
+    void handle(BigDecimal tradeRatio, Trader trader);
 }
